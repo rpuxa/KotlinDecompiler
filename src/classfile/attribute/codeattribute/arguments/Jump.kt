@@ -7,6 +7,8 @@ import kotlin.properties.Delegates
 
 class Jump(val condition: Condition, val offset: Int) : InstructionArgument {
 
+    override fun toString() = labelId.toString()
+
     var labelId: Int by Delegates.notNull()
 
     val jumpForward get() = offset > 0

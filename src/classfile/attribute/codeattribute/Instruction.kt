@@ -6,6 +6,10 @@ class Instruction(val type: InstructionTypes, val argument: InstructionArgument)
 
     operator fun component1() = type
     operator fun component2() = argument
+    override fun toString(): String {
+        return "$type $argument"
+    }
+
 
     companion object {
         fun readFromStream(stream: DataInputStream): Pair<Instruction, Int> {

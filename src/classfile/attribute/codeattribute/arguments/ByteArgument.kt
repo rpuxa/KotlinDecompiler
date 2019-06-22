@@ -6,6 +6,8 @@ class ByteArgument private constructor(val value: Int) : InstructionArgument {
 
     override val bytesCount get() = 1
 
+    override fun toString() = value.toString()
+
     companion object {
         @JvmField
         val M_ONE = ByteArgument(-1)

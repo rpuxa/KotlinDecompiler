@@ -7,7 +7,7 @@ import classfile.constant.ConstantPool
 import java.io.DataInputStream
 
 class StringConstant(
-    val utfReference: ConstantReference,
+    private val utfReference: ConstantReference,
     private val pool: ConstantPool
 ) : Constant() {
 
@@ -16,7 +16,7 @@ class StringConstant(
     companion object : ConstantBuilder {
         override val tag get() = 8
 
-        override fun readFromStream(stream: DataInputStream, pool: ConstantPool): DoubleConstant =
-            DoubleConstant(stream.readDouble())
+        override fun readFromStream(stream: DataInputStream, pool: ConstantPool): StringConstant =
+            StringConstant(stream.readUnsignedShort(), pool)
     }
 }

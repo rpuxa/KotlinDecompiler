@@ -11,6 +11,6 @@ class DeclarationVariable(val final: Boolean, val showType: Boolean, val variabl
         else
             builder.append("var")
 
-        builder.append(' ').append(VariableNames.getName(variableIndex))
+        builder.append(' ').append(Names.variable(variableIndex))
     }
 }

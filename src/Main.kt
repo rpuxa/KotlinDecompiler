@@ -1,18 +1,20 @@
 import classfile.ClassFile
 import decompiler.BlockBuilder
 import decompiler.CodeStringBuilder
-import decompiler.InstructionSequence
+import decompiler.ControlList
+import decompiler.optimization.Optimizations
 import java.io.DataInputStream
 import java.io.FileInputStream
 
 fun main() {
-    FileInputStream("JavaClassKt.class").use {
+    FileInputStream("C:\\Projects\\untitled2\\out\\production\\untitled2\\KotlinKt.class").use {
         val stream = DataInputStream(it)
         val file = ClassFile.readFromStream(stream)
         val block = BlockBuilder.fromCodeSequence(
-            file,
-            InstructionSequence(file.methods[1].attributes.codeAttribute.code.toMutableList())
+            file.constantPool,
+            ControlList(file.methods[0].attributes.codeAttribute.code.toMutableList())
         )
+        Optimizations.optimize(block)
         val builder = CodeStringBuilder()
         block.render(builder)
         println(builder)

@@ -4,4 +4,6 @@ import classfile.attribute.codeattribute.InstructionArgument
 
 object NoArgument : InstructionArgument {
     override val bytesCount get() = 0
+
+    override fun toString() = ""
 }

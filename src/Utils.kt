@@ -15,3 +15,6 @@ fun <T> Iterable<T>.hasSingleElement(): Boolean {
     iterator.next()
     return !iterator.hasNext()
 }
+fun <T> MutableList<T>.pop(): T {
+    return removeAt(size - 1)
+}

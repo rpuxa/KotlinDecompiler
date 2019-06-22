@@ -4,4 +4,7 @@ import classfile.attribute.codeattribute.InstructionArgument
 
 class IntArgument(val value: Int) : InstructionArgument {
     override val bytesCount get() = 4
+
+    override fun toString() = value.toString()
+
 }

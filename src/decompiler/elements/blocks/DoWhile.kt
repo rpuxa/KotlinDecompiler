@@ -19,5 +19,5 @@ class DoWhile(
         builder.newLine()
     }
 
-    override fun iterator() = block.iterator()
+    override val blocks get() = listOf(block)
 }

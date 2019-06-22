@@ -9,7 +9,12 @@ abstract class Attribute {
 
     companion object : Readable<Attribute?> {
 
-        private val attributesToSkip = arrayOf("StackMapTable")
+        private val attributesToSkip = arrayOf(
+            "StackMapTable",
+            "RuntimeInvisibleParameterAnnotations",
+            "SourceDebugExtension",
+            "RuntimeVisibleAnnotations"
+        )
 
         override fun readFromStream(stream: DataInputStream, pool: ConstantPool): Attribute? {
             val attrName = pool.getName(stream.readUnsignedShort())

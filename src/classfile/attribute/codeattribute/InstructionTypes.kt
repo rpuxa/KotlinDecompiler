@@ -204,7 +204,9 @@ enum class InstructionTypes(private val code: Int) {
         override fun convertTo() = SUB to NoArgument
     },
     GETFIELD(0xb4),
-    GETSTATIC(0xb2),
+    GETSTATIC(0xb2) {
+        override fun DataInputStream.arg() = ushort
+    },
     GOTO(0xa7) {
         override fun DataInputStream.arg() = Jump(Condition.NO_CONDITION, short.value)
 
@@ -352,9 +354,15 @@ enum class InstructionTypes(private val code: Int) {
     INSTANCEOF(0xc1),
     INVOKEDYNAMIC(0xba),
     INVOKEINTERFACE(0xb9),
-    INVOKESPECIAL(0xb7),
-    INVOKESTATIC(0xb8),
-    INVOKEVIRTUAL(0xb6),
+    INVOKESPECIAL(0xb7){
+        override fun DataInputStream.arg() = ushort
+    },
+    INVOKESTATIC(0xb8) {
+        override fun DataInputStream.arg() = ushort
+    },
+    INVOKEVIRTUAL(0xb6){
+        override fun DataInputStream.arg() = ushort
+    },
     IOR(0x80),
     IREM(0x70),
     IRETURN(0xac) {
@@ -473,7 +481,9 @@ enum class InstructionTypes(private val code: Int) {
     MONITORENTER(0xc2),
     MONITOREXIT(0xc3),
     MULTIANEWARRAY(0xc5),
-    NEW(0xbb),
+    NEW(0xbb) {
+        override fun DataInputStream.arg() = ushort
+    },
     NEWARRAY(0xbc),
     NOP(0x00),
     POP(0x57),
@@ -484,7 +494,9 @@ enum class InstructionTypes(private val code: Int) {
     RETURN(0xb1),
     SALOAD(0x35),
     SASTORE(0x56),
-    SIPUSH(0x11),
+    SIPUSH(0x11) {
+        override fun DataInputStream.arg() = short
+    },
     SWAP(0x5f),
     TABLESWITCH(0xaa),
 
@@ -505,6 +517,7 @@ enum class InstructionTypes(private val code: Int) {
     LOAD(-1),
     BREAK(-1),
     CONTINUE(-1),
+    WHILE_LOOP_CONDITION(-1),
     ;
 
 

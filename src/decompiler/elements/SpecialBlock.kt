@@ -1,3 +1,8 @@
 package decompiler.elements
 
-interface SpecialBlock : ElementSequence
+import decompiler.Block
+import decompiler.Element
+
+interface SpecialBlock : Element {
+    val blocks: List<Block>
+}

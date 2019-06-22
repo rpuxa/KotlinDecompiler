@@ -1,9 +1,6 @@
 package decompiler
 
-import decompiler.elements.ElementSequence
-import java.util.*
-
-class Block(val elements: Stack<Element>) : ElementSequence {
+class Block(val elements: MutableList<Element>) : Element {
 
     override fun render(builder: CodeStringBuilder) {
         builder.addTab()
@@ -14,5 +11,5 @@ class Block(val elements: Stack<Element>) : ElementSequence {
         builder.removeTab()
     }
 
-    override fun iterator() = elements.iterator()
+    fun toControlList(): ControlList<Element> = ControlList(elements)
 }

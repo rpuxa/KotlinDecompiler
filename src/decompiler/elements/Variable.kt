@@ -6,7 +6,7 @@ import decompiler.Element
 class Variable(val index: Int) : Element {
 
     override fun render(builder: CodeStringBuilder) {
-        builder.append(VariableNames.getName(index))
+        builder.append(Names.variable(index))
 
     }
 }

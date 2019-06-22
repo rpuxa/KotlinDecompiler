@@ -26,8 +26,5 @@ class If(
         }
     }
 
-    override fun iterator() = iterator {
-        ifBlock.forEach { yield(it) }
-        elseBlock?.forEach { yield(it) }
-    }
+    override val blocks get() = if (elseBlock == null) listOf(ifBlock) else listOf(ifBlock, elseBlock)
 }
