@@ -1,14 +1,15 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.VariablesNames
 
-class DeclarationAssigment(
+class DeclarationAssignment(
     val final: Boolean,
     val showType: Boolean,
     variableIndex: Int,
-    element: Element
-) : Assignment(variableIndex, element) {
+    element: Element,
+    variablesNames: VariablesNames
+) : Assignment(variableIndex, element, variablesNames) {
 
     override fun render(builder: CodeStringBuilder) {
         if (final)

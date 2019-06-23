@@ -1,9 +1,9 @@
 package decompiler.elements.literals
 
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.elements.Element
 
-class BooleanLiteral private constructor(val value: Boolean) : Element{
+class BooleanLiteral private constructor(val value: Boolean) : Element {
 
     override fun render(builder: CodeStringBuilder) {
         builder.append(value)

@@ -1,9 +1,15 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.VariablesNames
 
-class DeclarationVariable(val final: Boolean, val showType: Boolean, val variableIndex: Int) : Element {
+class DeclarationVariable(
+    val final: Boolean,
+    val showType: Boolean,
+    val variableIndex: Int,
+    private val variablesNames: VariablesNames
+) :
+    Element {
 
     override fun render(builder: CodeStringBuilder) {
         if (final)
@@ -11,6 +17,6 @@ class DeclarationVariable(val final: Boolean, val showType: Boolean, val variabl
         else
             builder.append("var")
 
-        builder.append(' ').append(Names.variable(variableIndex))
+        builder.append(' ').append(variablesNames[variableIndex])
     }
 }

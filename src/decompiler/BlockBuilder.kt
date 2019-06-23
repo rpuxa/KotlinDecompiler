@@ -19,238 +19,277 @@ import kotlin.test.fail
 
 object BlockBuilder {
 
-    fun fromCodeSequence(pool: ConstantPool, sequence: ControlList<Instruction>): Block {
-        return create(pool, sequence, 0)
-    }
-
-    private fun create(pool: ConstantPool, sequence: ControlList<Instruction>, loopsCount: Int): Block {
-        var loopsCount = loopsCount
-        val stack = Stack<Element>()
+    fun fromCodeSequence(pool: ConstantPool, code: MutableList<Instruction>, variablesNames: VariablesNames): Block {
 
 
+        fun create(sequence: ControlList<Instruction>, loopsCount: Int): Block {
+            var loopsCount = loopsCount
+            val stack = Stack<Element>()
 
-        loop@ while (true) {
-            val instruction = sequence.currentOrNullAndMoveForward() ?: break
-            val arg = instruction.argument
-            when (val type = instruction.type) {
-                InstructionTypes.ICONST, InstructionTypes.BIPUSH -> {
-                    arg as ByteArgument
-                    stack.add(IntLiteral(arg.value))
-                }
 
-                InstructionTypes.SIPUSH -> {
-                    arg as ShortArgument
-                    stack.add(IntLiteral(arg.value))
-                }
 
-                InstructionTypes.LCONST -> {
-                    arg as ByteArgument
-                    stack.add(LongLiteral(arg.value.toLong()))
-                }
-
-                InstructionTypes.FCONST -> {
-                    arg as ByteArgument
-                    stack.add(FloatLiteral(arg.value.toFloat()))
-                }
-
-                InstructionTypes.DCONST -> {
-                    arg as ByteArgument
-                    stack.add(DoubleLiteral(arg.value.toDouble()))
-                }
-
-                InstructionTypes.LOAD -> {
-                    arg as ByteArgument
-                    stack.add(Variable(arg.value))
-                }
-
-                InstructionTypes.ACONST_NULL -> {
-                    stack.push(NullObject)
-                }
-
-                InstructionTypes.LDC_W -> {
-                    arg as ShortArgument
-                    val literal = when (val constant = pool.getConstant(arg.value)) {
-                        is IntConstant -> IntLiteral(constant.value)
-                        is LongConstant -> LongLiteral(constant.value)
-                        is FloatConstant -> FloatLiteral(constant.value)
-                        is DoubleConstant -> DoubleLiteral(constant.value)
-                        is StringConstant -> StringLiteral(constant.value)
-                        else -> fail("Wrong constant $constant")
+            loop@ while (true) {
+                val instruction = sequence.currentOrNullAndMoveForward() ?: break
+                val arg = instruction.argument
+                when (val type = instruction.type) {
+                    InstructionTypes.ICONST, InstructionTypes.BIPUSH -> {
+                        arg as ByteArgument
+                        stack.add(IntLiteral(arg.value))
                     }
-                    stack.push(literal)
-                }
 
-                InstructionTypes.INVOKEVIRTUAL -> {
-                    arg as ShortArgument
-                    stack.push(FunctionInvoke.fromStack(pool.get(arg.value), false, stack))
-                }
+                    InstructionTypes.SIPUSH -> {
+                        arg as ShortArgument
+                        stack.add(IntLiteral(arg.value))
+                    }
 
-                InstructionTypes.INVOKESTATIC -> {
-                    arg as ShortArgument
-                    stack.push(FunctionInvoke.fromStack(pool.get(arg.value), true, stack))
-                }
+                    InstructionTypes.LCONST -> {
+                        arg as ByteArgument
+                        stack.add(LongLiteral(arg.value.toLong()))
+                    }
 
-                InstructionTypes.GETSTATIC -> {
-                    arg as ShortArgument
-                    stack.push(GetField.fromStack(pool.get(arg.value), true, stack))
-                }
+                    InstructionTypes.FCONST -> {
+                        arg as ByteArgument
+                        stack.add(FloatLiteral(arg.value.toFloat()))
+                    }
 
-                InstructionTypes.NEW -> {
-                    if (sequence.currentAndMoveForward().type != InstructionTypes.DUP)
-                        fail()
-                }
+                    InstructionTypes.DCONST -> {
+                        arg as ByteArgument
+                        stack.add(DoubleLiteral(arg.value.toDouble()))
+                    }
 
-                InstructionTypes.INVOKESPECIAL -> {
-                    arg as ShortArgument
-                    stack.push(
-                        NewObject.fromStack(
-                            pool.get(arg.value),
-                            stack
-                        )
-                    )
-                }
+                    InstructionTypes.LOAD -> {
+                        arg as ByteArgument
+                        stack.add(Variable(arg.value, variablesNames))
+                    }
+
+                    InstructionTypes.ACONST_NULL -> {
+                        stack.push(NullObject)
+                    }
+
+                    InstructionTypes.LDC_W -> {
+                        arg as ShortArgument
+                        val literal = when (val constant = pool.getConstant(arg.value)) {
+                            is IntConstant -> IntLiteral(constant.value)
+                            is LongConstant -> LongLiteral(constant.value)
+                            is FloatConstant -> FloatLiteral(constant.value)
+                            is DoubleConstant -> DoubleLiteral(constant.value)
+                            is StringConstant -> StringLiteral(constant.value)
+                            else -> fail("Wrong constant $constant")
+                        }
+                        stack.push(literal)
+                    }
+
+                    InstructionTypes.INVOKEVIRTUAL -> {
+                        arg as ShortArgument
+                        stack.push(FunctionInvoke.fromStack(pool.get(arg.value), false, stack))
+                    }
+
+                    InstructionTypes.INVOKESTATIC -> {
+                        arg as ShortArgument
+                        stack.push(FunctionInvoke.fromStack(pool.get(arg.value), true, stack))
+                    }
+
+                    InstructionTypes.GETSTATIC -> {
+                        arg as ShortArgument
+                        stack.push(GetField.fromStack(pool.get(arg.value), true, stack))
+                    }
+
+                    InstructionTypes.GETFIELD -> {
+                        arg as ShortArgument
+                        stack.push(GetField.fromStack(pool.get(arg.value), false, stack))
+                    }
+
+                    InstructionTypes.PUTSTATIC -> {
+                        arg as ShortArgument
+                        stack.push(SetField.fromStack(pool.get(arg.value), true, stack))
+                    }
+
+                    InstructionTypes.PUTFIELD -> {
+                        arg as ShortArgument
+                        stack.push(SetField.fromStack(pool.get(arg.value), false, stack))
+                    }
+
+                    InstructionTypes.NEW -> {
+                        if (sequence.currentAndMoveForward().type != InstructionTypes.DUP)
+                            fail()
+                        stack.push(PrepareToNewObject)
+                    }
+
+                    InstructionTypes.INVOKESPECIAL -> {
+                        arg as ShortArgument
+                        when (val last = stack.pop()) {
+                            is PrepareToNewObject -> stack.push(
+                                NewObject.fromStack(
+                                    pool.get(arg.value),
+                                    stack
+                                )
+                            )
+                            is Variable -> {
+                                if (last.index != 0)
+                                    fail()
+                                stack.push(
+                                    CallSuperConstructor.fromStack(
+                                        pool.get(arg.value),
+                                        stack
+                                    )
+                                )
+                            }
+                            else -> fail()
+                        }
+                    }
 
 
-                in OPERATORS_INSTRUCTIONS -> {
-                    val operatorType = OPERATORS[type] ?: error("Unknown operator")
-                    val args = Array(operatorType.arity) { stack.pop() }
-                    stack.add(Operator(operatorType, args.reversedArray()))
+                    in OPERATORS_INSTRUCTIONS -> {
+                        val operatorType = OPERATORS[type] ?: error("Unknown operator")
+                        val args = Array(operatorType.arity) { stack.pop() }
+                        stack.add(Operator(operatorType, args.reversed().toMutableList()))
 
-                }
+                    }
 
-                InstructionTypes.STORE -> {
-                    arg as ByteArgument
-                    val element = stack.pop()
-                    stack.push(Assignment(arg.value, element))
-                }
+                    InstructionTypes.STORE -> {
+                        arg as ByteArgument
+                        val element = stack.pop()
+                        stack.push(Assignment(arg.value, element, variablesNames))
+                    }
 
-                InstructionTypes.RETURN -> {
-                    stack.push(Return(null))
-                }
+                    InstructionTypes.RETURN -> {
+                        stack.push(Return(null))
+                    }
 
-                InstructionTypes.WHILE_LOOP_CONDITION -> {
-                    arg as Jump
-                    stack.push(getComparerOperator(arg, stack, true))
-                }
+                    InstructionTypes.RETURN_SOMETHING -> {
+                        stack.push(Return(stack.pop()))
+                    }
 
-                InstructionTypes.IF -> {
-                    arg as Jump
-                    val start = sequence.indexOf(instruction) + 1
-                    do {
-                        val (currentType, currentArg) = sequence.currentAndMoveForward()
-                    } while (currentType != InstructionTypes.LABEL || (currentArg as ShortArgument).value != arg.labelId)
-                    sequence.moveBack(2)
-                    val ifBlock: Block
-                    val elseBlock: Block?
-                    val current = sequence.currentAndMoveForward()
-                    if (current.type == InstructionTypes.GOTO_W && (current.argument as Jump).jumpForward) {
-                        ifBlock = create(pool, sequence.subSequence(start, sequence.currentPosition - 2), loopsCount)
-                        val labelId = current.argument.labelId
-                        sequence.currentAndMoveForward()
-                        val startElse = sequence.currentPosition
+                    InstructionTypes.WHILE_LOOP_CONDITION -> {
+                        arg as Jump
+                        stack.push(getComparerOperator(arg, stack, true))
+                    }
+
+                    InstructionTypes.IF -> {
+                        arg as Jump
+                        val start = sequence.indexOf(instruction) + 1
                         do {
                             val (currentType, currentArg) = sequence.currentAndMoveForward()
-                        } while (currentType != InstructionTypes.LABEL || (currentArg as ShortArgument).value != labelId)
-                        elseBlock = create(
-                            pool,
-                            sequence.subSequence(startElse, sequence.currentPosition - 1),
-                            loopsCount
-                        )
-                    } else {
-                        ifBlock = create(pool, sequence.subSequence(start, sequence.currentPosition - 1), loopsCount)
-                        elseBlock = null
-                        sequence.moveForward()
-                    }
-
-                    val operator = getComparerOperator(arg, stack, true)
-                    stack.push(If(operator, ifBlock, elseBlock))
-                }
-
-                InstructionTypes.LABEL -> {
-                    arg as ShortArgument
-                    if (sequence.lastElement())
-                        break@loop
-                    val start = sequence.currentPosition
-                    val labelId = arg.value
-                    do {
-                        val (currentType, currentArg) = sequence.currentAndMoveForward()
-                    } while (
-                        (currentType != InstructionTypes.IF && currentType != InstructionTypes.GOTO_W) ||
-                        (currentArg as Jump).labelId != labelId
-                    )
-                    val instructionAfterLoop = sequence.currentOrNull()
-                    val labelAfterLoopId = if (instructionAfterLoop?.type == InstructionTypes.LABEL) {
-                        (instructionAfterLoop.argument as ShortArgument).value
-                    } else {
-                        null
-                    }
-                    sequence.moveBack()
-                    val labelJump = sequence.current().argument as Jump
-                    sequence.moveBack()
-                    val end = sequence.currentPosition
-                    var whileLoopHasCondition = false
-                    do {
-                        val i = sequence.previous()!!
-                        val argument = i.argument
-                        if (i.type == InstructionTypes.GOTO_W) {
-                            val jump = argument as Jump
-                            if (jump.labelId == labelId) {
-                                sequence.moveForward()
-                                sequence.replace(Instruction(InstructionTypes.CONTINUE, ShortArgument(loopsCount)))
-                            }
-                            if (jump.labelId == labelAfterLoopId) {
-                                sequence.moveForward()
-                                sequence.replace(Instruction(InstructionTypes.BREAK, ShortArgument(loopsCount)))
-                            }
-                        } else if (labelJump.condition == Condition.NO_CONDITION &&
-                            i.type == InstructionTypes.IF &&
-                            (argument as Jump).labelId == labelAfterLoopId
-                        ) {
-                            whileLoopHasCondition = true
-                            sequence.moveForward()
-                            sequence.replace(Instruction(InstructionTypes.WHILE_LOOP_CONDITION, argument))
-                        }
-                    } while (i != instruction)
-
-                    val subSequence = sequence.subSequence(start, end)
-                    stack.push(
-                        if (labelJump.condition != Condition.NO_CONDITION) {
-                            val block = create(pool, subSequence, ++loopsCount)
-                            DoWhile(getComparerOperator(labelJump, block.elements, false), block)
+                        } while (currentType != InstructionTypes.LABEL || (currentArg as ShortArgument).value != arg.labelId)
+                        sequence.moveBack(2)
+                        val ifBlock: Block
+                        val elseBlock: Block?
+                        val current = sequence.currentAndMoveForward()
+                        if (current.type == InstructionTypes.GOTO_W && (current.argument as Jump).jumpForward) {
+                            ifBlock = create(sequence.subSequence(start, sequence.currentPosition - 2), loopsCount)
+                            val labelId = current.argument.labelId
+                            sequence.currentAndMoveForward()
+                            val startElse = sequence.currentPosition
+                            do {
+                                val (currentType, currentArg) = sequence.currentAndMoveForward()
+                            } while (currentType != InstructionTypes.LABEL || (currentArg as ShortArgument).value != labelId)
+                            elseBlock = create(
+                                sequence.subSequence(startElse, sequence.currentPosition - 1),
+                                loopsCount
+                            )
                         } else {
-                            val block = create(pool, subSequence, ++loopsCount)
-                            val condition = if (whileLoopHasCondition) block.elements.removeAt(0) else null
-                            While(condition, block)
+                            ifBlock = create(sequence.subSequence(start, sequence.currentPosition - 1), loopsCount)
+                            elseBlock = null
+                            sequence.moveForward()
                         }
-                    )
-                    sequence.jumpTo(end + 2)
-                    if (sequence.currentOrNull()?.type == InstructionTypes.LABEL)
-                        sequence.moveForward()
+
+                        val operator = getComparerOperator(arg, stack, true)
+                        stack.push(If(operator, ifBlock, elseBlock))
+                    }
+
+                    InstructionTypes.LABEL -> {
+                        arg as ShortArgument
+                        if (sequence.lastElement())
+                            break@loop
+                        val start = sequence.currentPosition
+                        val labelId = arg.value
+                        do {
+                            val (currentType, currentArg) = sequence.currentAndMoveForward()
+                        } while (
+                            (currentType != InstructionTypes.IF && currentType != InstructionTypes.GOTO_W) ||
+                            (currentArg as Jump).labelId != labelId
+                        )
+                        val instructionAfterLoop = sequence.currentOrNull()
+                        val labelAfterLoopId = if (instructionAfterLoop?.type == InstructionTypes.LABEL) {
+                            (instructionAfterLoop.argument as ShortArgument).value
+                        } else {
+                            null
+                        }
+                        sequence.moveBack()
+                        val labelJump = sequence.current().argument as Jump
+                        sequence.moveBack()
+                        val end = sequence.currentPosition
+                        var whileLoopHasCondition = false
+                        do {
+                            val i = sequence.previous()!!
+                            val argument = i.argument
+                            if (i.type == InstructionTypes.GOTO_W) {
+                                val jump = argument as Jump
+                                if (jump.labelId == labelId) {
+                                    sequence.moveForward()
+                                    sequence.replace(Instruction(InstructionTypes.CONTINUE, ShortArgument(loopsCount)))
+                                }
+                                if (jump.labelId == labelAfterLoopId) {
+                                    sequence.moveForward()
+                                    sequence.replace(Instruction(InstructionTypes.BREAK, ShortArgument(loopsCount)))
+                                }
+                            } else if (labelJump.condition == Condition.NO_CONDITION &&
+                                i.type == InstructionTypes.IF &&
+                                (argument as Jump).labelId == labelAfterLoopId
+                            ) {
+                                whileLoopHasCondition = true
+                                sequence.moveForward()
+                                sequence.replace(Instruction(InstructionTypes.WHILE_LOOP_CONDITION, argument))
+                            }
+                        } while (i != instruction)
+
+                        val subSequence = sequence.subSequence(start, end)
+                        stack.push(
+                            if (labelJump.condition != Condition.NO_CONDITION) {
+                                val block = create(subSequence, ++loopsCount)
+                                DoWhile(getComparerOperator(labelJump, block.elements, false), block)
+                            } else {
+                                val block = create(subSequence, ++loopsCount)
+                                val condition =
+                                    if (whileLoopHasCondition) block.elements.removeAt(0) else BooleanLiteral.TRUE
+                                While(condition, block)
+                            }
+                        )
+                        sequence.jumpTo(end + 2)
+                        if (sequence.currentOrNull()?.type == InstructionTypes.LABEL)
+                            sequence.moveForward()
+                    }
+
+                    InstructionTypes.BREAK -> {
+                        arg as ShortArgument
+                        stack.push(Break(arg.value))
+                    }
+
+                    InstructionTypes.CONTINUE -> {
+                        arg as ShortArgument
+                        stack.push(Continue(arg.value))
+                    }
+
+
+                    InstructionTypes.NOP -> {
+                        /* ignore */
+                    }
+
+                    else -> fail("Unknown instruction $type")
                 }
-
-                InstructionTypes.BREAK -> {
-                    arg as ShortArgument
-                    stack.push(Break(arg.value))
-                }
-
-                InstructionTypes.CONTINUE -> {
-                    arg as ShortArgument
-                    stack.push(Continue(arg.value))
-                }
-
-
-                InstructionTypes.NOP -> {
-                    /* ignore */
-                }
-
-                else -> fail("Unknown instruction $type")
             }
+
+            //   addVariableDeclarations(stack)
+
+            return Block(stack)
         }
 
-        //   addVariableDeclarations(stack)
 
-        return Block(stack)
+
+
+        return create(ControlList(code), 0)
     }
+
 
     private fun getComparerOperator(jump: Jump, list: MutableList<Element>, reverse: Boolean): Operator {
         val operatorType = when (jump.condition) {
@@ -285,7 +324,10 @@ object BlockBuilder {
             else -> list.pop()
         }
 
-        return Operator(if (reverse) operatorType.reversed() else operatorType, arrayOf(list.pop(), secondArgument))
+        return Operator(
+            if (reverse) operatorType.reversed() else operatorType,
+            mutableListOf(list.pop(), secondArgument)
+        )
     }
 
 /*

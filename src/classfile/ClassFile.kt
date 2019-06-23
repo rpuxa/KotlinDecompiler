@@ -14,7 +14,7 @@ class ClassFile(
     val minorVersion: Int,
     val majorVersion: Int,
     val constantPool: ConstantPool,
-    val accessFlags: List<ClassFileFlags>,
+    val accessFlags: Set<ClassFileFlags>,
     val thisClass: ClassConstant,
     val superClass: ClassConstant,
     val interfaces: List<ConstantReference>,

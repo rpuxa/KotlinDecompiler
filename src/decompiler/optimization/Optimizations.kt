@@ -1,23 +1,23 @@
 package decompiler.optimization
 
-import decompiler.Block
 import decompiler.KotlinClass
-import decompiler.optimization.optimizations.SetVariableDeclarations
-import java.io.File
-import java.util.ArrayList
+import decompiler.optimization.optimizations.*
 
 
 object Optimizations {
 
     private val ALL = arrayOf(
-        SetVariableDeclarations
+        RemoveRedudantReturnInVoidFunctions,
+        SelectKotlinClassType,
+        SetVariableDeclarations,
+        InlineSingleVariables,
+        ConvertFieldsAndMethodsToProperties,
+        AddBackingFieldToGettersAndSetters,
+        RemoveRedundantGettersAndSetters,
+        ConvertFunctionsToConstructors
     )
 
     fun optimize(clazz: KotlinClass) {
-
-    }
-
-    fun optimize(block: Block) {
-        ALL.forEach { it.optimize(block) }
+        ALL.forEach { it.optimize(clazz) }
     }
 }

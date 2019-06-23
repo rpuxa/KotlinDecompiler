@@ -1,7 +1,7 @@
 package decompiler.elements.literals
 
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.elements.Element
 
 class StringLiteral(val value: String) : Element {
     override fun render(builder: CodeStringBuilder) {

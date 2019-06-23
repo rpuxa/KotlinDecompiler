@@ -1,8 +1,11 @@
 package decompiler
 
 import classfile.attribute.codeattribute.InstructionTypes
+import decompiler.elements.ComplexElement
+import decompiler.elements.Element
 
-class Operator(val type: OperatorType, private val operands: Array<Element>) : Element {
+class Operator(val type: OperatorType, private val operands: MutableList<Element>) :
+    ComplexElement by ComplexElementListDelegate(operands) {
 
     override fun render(builder: CodeStringBuilder) {
 

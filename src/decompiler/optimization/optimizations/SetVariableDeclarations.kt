@@ -1,35 +1,41 @@
 package decompiler.optimization.optimizations
 
-import decompiler.Block
+import decompiler.elements.Block
+import decompiler.ElementController
+import decompiler.KotlinFunction
+import decompiler.VariablesNames
 import decompiler.elements.Assignment
-import decompiler.elements.DeclarationAssigment
-import decompiler.elements.SpecialBlock
+import decompiler.elements.DeclarationAssignment
 import decompiler.optimization.Optimization
 
 object SetVariableDeclarations : Optimization(false, true) {
 
-    override fun optimize(block: Block) {
-        optimize(block, HashSet())
+    override fun optimize(func: KotlinFunction) {
+        optimize(ElementController(func.code), HashSet(), func.variablesNames)
     }
 
-    private fun optimize(block: Block, set: HashSet<Int>) {
-        val list = block.toControlList()
+    private fun optimize(controller: ElementController, set: HashSet<Int>, variablesNames: VariablesNames) {
         val copySet = HashSet(set)
-        list.forEach { element ->
-            if (element is Assignment && element.variableIndex !in copySet) {
-                copySet.add(element.variableIndex)
-                list.replace(DeclarationAssigment(
-                    final = false,
-                    showType = false,
-                    variableIndex = element.variableIndex,
-                    element = element.element
-                ))
+        do {
+            val element = controller.current()
+            if (element is Assignment) {
+                if (element.variableIndex !in copySet) {
+                    copySet.add(element.variableIndex)
+                    controller.replace(
+                        DeclarationAssignment(
+                            final = false,
+                            showType = false,
+                            variableIndex = element.variableIndex,
+                            element = element.element,
+                            variablesNames = variablesNames
+                        )
+                    )
+                }
+            } else if (controller.canDown()) {
+                controller.down()
+                optimize(controller, copySet, variablesNames)
+                controller.up()
             }
-            if (element is Block) {
-                optimize(element, copySet)
-            } else if (element is SpecialBlock) {
-                element.blocks.forEach { optimize(it, copySet) }
-            }
-        }
+        } while (controller.right())
     }
 }

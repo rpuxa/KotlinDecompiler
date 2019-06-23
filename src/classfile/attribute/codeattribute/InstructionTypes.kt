@@ -203,7 +203,9 @@ enum class InstructionTypes(private val code: Int) {
     FSUB(0x66) {
         override fun convertTo() = SUB to NoArgument
     },
-    GETFIELD(0xb4),
+    GETFIELD(0xb4) {
+        override fun DataInputStream.arg() = ushort
+    },
     GETSTATIC(0xb2) {
         override fun DataInputStream.arg() = ushort
     },
@@ -488,8 +490,12 @@ enum class InstructionTypes(private val code: Int) {
     NOP(0x00),
     POP(0x57),
     POP2(0x58),
-    PUTFIELD(0xb5),
-    PUTSTATIC(0xb3),
+    PUTFIELD(0xb5) {
+        override fun DataInputStream.arg() = ushort
+    },
+    PUTSTATIC(0xb3) {
+        override fun DataInputStream.arg() = ushort
+    },
     RET(0xa9),
     RETURN(0xb1),
     SALOAD(0x35),

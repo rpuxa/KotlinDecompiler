@@ -1,15 +1,14 @@
 package decompiler.elements.blocks
 
-import decompiler.Block
+import decompiler.elements.Block
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.elements.Element
 import decompiler.elements.SpecialBlock
-import hasSingleElement
 
 class If(
-    private val condition: Element,
-    private val ifBlock: Block,
-    private val elseBlock: Block? = null
+    private var condition: Element,
+    private var ifBlock: Block,
+    private var elseBlock: Block? = null
 ) : SpecialBlock {
     override fun render(builder: CodeStringBuilder) {
         builder.append("if (")
@@ -26,5 +25,20 @@ class If(
         }
     }
 
-    override val blocks get() = if (elseBlock == null) listOf(ifBlock) else listOf(ifBlock, elseBlock)
+    override fun getByIndex(index: Int) = when (index) {
+        0 -> condition
+        1 -> ifBlock
+        2 -> elseBlock!!
+        else -> outOfBound(index)
+    }
+
+    override fun replaceByIndex(index: Int, element: Element) {
+        when (index) {
+            0 -> condition = element
+            1 -> ifBlock = element as Block
+            2 -> elseBlock = element as Block
+        }
+    }
+
+    override val size get() = if (elseBlock == null) 2 else 3
 }

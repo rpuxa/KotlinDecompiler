@@ -7,7 +7,7 @@ import classfile.constant.constants.UtfConstant
 import java.io.DataInputStream
 
 class Field(
-    val flags: List<FieldFlags>,
+    val flags: Set<FieldFlags>,
     val name: UtfConstant,
     val descriptor: UtfConstant,
     val attributes: Attributes

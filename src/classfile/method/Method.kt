@@ -7,7 +7,7 @@ import classfile.constant.constants.UtfConstant
 import java.io.DataInputStream
 
 class Method(
-    val flags: List<MethodFlags>,
+    val flags: Set<MethodFlags>,
     val name: UtfConstant,
     val descriptor: UtfConstant,
     val attributes: Attributes

@@ -5,7 +5,7 @@ import classfile.attribute.codeattribute.Instruction
 class ControlList<T>(
     private val list: MutableList<T>,
     private val startPosition: Int = 0,
-    private val endPosition: Int = list.lastIndex
+    private var endPosition: Int = list.lastIndex
 ) {
     var currentPosition = startPosition
         private set
@@ -52,5 +52,10 @@ class ControlList<T>(
             block(current())
             moveForward()
         }
+    }
+
+    fun delete() {
+        list.removeAt(currentPosition)
+        endPosition--
     }
 }

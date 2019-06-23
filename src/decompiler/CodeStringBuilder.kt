@@ -4,15 +4,25 @@ class CodeStringBuilder {
 
     private val builder = StringBuilder()
 
-    private var tabs = -1
+    private var tabs = 0
     private var newLine = true
 
-    fun removeTab() {
+    fun removeTab(): CodeStringBuilder {
         tabs--
+
+        return this
     }
 
-    fun addTab() {
+    fun addTab(): CodeStringBuilder {
         tabs++
+
+        return this
+    }
+
+    fun append(renderable: Renderable): CodeStringBuilder {
+        renderable.render(this)
+
+        return this
     }
 
     fun append(char: Char): CodeStringBuilder {
@@ -64,9 +74,11 @@ class CodeStringBuilder {
         return this
     }
 
-    fun newLine() {
+    fun newLine(): CodeStringBuilder {
         append('\n')
         newLine = true
+
+        return this
     }
 
     override fun toString() = builder.toString()

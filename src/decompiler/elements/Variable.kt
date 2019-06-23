@@ -1,12 +1,12 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.VariablesNames
 
-class Variable(val index: Int) : Element {
+class Variable(val index: Int, private val variableNames: VariablesNames) : Element {
 
     override fun render(builder: CodeStringBuilder) {
-        builder.append(Names.variable(index))
+        builder.append(variableNames[index])
 
     }
 }

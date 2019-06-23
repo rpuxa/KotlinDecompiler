@@ -1,24 +1,37 @@
 package decompiler.elements.blocks
 
-import decompiler.Block
+import decompiler.elements.Block
 import decompiler.CodeStringBuilder
-import decompiler.Element
+import decompiler.elements.Element
 import decompiler.elements.SpecialBlock
 import decompiler.elements.literals.BooleanLiteral
 
 class While(
-    val condition: Element?,
-    val block: Block
+    var condition: Element,
+    var block: Block
 ) : SpecialBlock {
     override fun render(builder: CodeStringBuilder) {
-            builder.append("while (")
-            (condition ?: BooleanLiteral.TRUE).render(builder)
-            builder.append(") {")
-            builder.newLine()
-            block.render(builder)
-            builder.append("}")
-            builder.newLine()
+        builder.append("while (")
+        condition.render(builder)
+        builder.append(") {")
+        builder.newLine()
+        block.render(builder)
+        builder.append("}")
+        builder.newLine()
     }
 
-    override val blocks get() = listOf(block)
+    override fun getByIndex(index: Int) = if (index == 0) {
+        condition
+    } else {
+        block
+    }
+
+    override fun replaceByIndex(index: Int, element: Element) {
+        if (index == 0)
+            condition = element
+        else
+            block = element as Block
+    }
+
+    override val size get() = 2
 }

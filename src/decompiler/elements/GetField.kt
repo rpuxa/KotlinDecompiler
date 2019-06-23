@@ -1,16 +1,14 @@
 package decompiler.elements
 
 import classfile.constant.constants.FieldRefConstant
-import classfile.constant.constants.MethodRefConstant
 import decompiler.CodeStringBuilder
-import decompiler.Element
 import decompiler.MemberReference
 import java.util.*
 
 class GetField(
     val ref: MemberReference,
-    val obj: Element?
-) : Element {
+    var obj: Element?
+) : ComplexElement {
 
     override fun render(builder: CodeStringBuilder) {
         val obj = obj
@@ -22,6 +20,14 @@ class GetField(
         builder.append('.')
         builder.append(ref.name)
     }
+
+    override fun getByIndex(index: Int) = obj!!
+
+    override fun replaceByIndex(index: Int, element: Element) {
+        obj = element
+    }
+
+    override val size get() = if (obj == null) 0 else 1
 
     companion object {
         fun fromStack(fieldRefConstant: FieldRefConstant, static: Boolean, stack: Stack<Element>): GetField {
