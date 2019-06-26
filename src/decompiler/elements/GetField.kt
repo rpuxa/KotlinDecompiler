@@ -3,6 +3,7 @@ package decompiler.elements
 import classfile.constant.constants.FieldRefConstant
 import decompiler.CodeStringBuilder
 import decompiler.MemberReference
+import decompiler.Type
 import java.util.*
 
 class GetField(
@@ -20,6 +21,8 @@ class GetField(
         builder.append('.')
         builder.append(ref.name)
     }
+
+    override val type = ref.signature.returnType
 
     override fun getByIndex(index: Int) = obj!!
 

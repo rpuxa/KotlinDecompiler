@@ -4,6 +4,7 @@ import classfile.constant.constants.MethodRefConstant
 import decompiler.CodeStringBuilder
 import decompiler.ComplexElementListDelegate
 import decompiler.MemberReference
+import decompiler.Type
 import java.util.*
 
 class NewObject(
@@ -14,6 +15,8 @@ class NewObject(
         builder.append(constructor.clazz.name)
         FunctionInvoke.renderArguments(builder, arguments)
     }
+
+    override val type = Type(constructor.clazz, false)
 
     companion object {
         fun fromStack(methodRefConstant: MethodRefConstant, stack: Stack<Element>): NewObject {

@@ -7,14 +7,16 @@ import decompiler.optimization.optimizations.*
 object Optimizations {
 
     private val ALL = arrayOf(
-        RemoveRedudantReturnInVoidFunctions,
+        RemoveRedundantReturnInVoidFunctions,
         SelectKotlinClassType,
-        SetVariableDeclarations,
-        InlineSingleVariables,
+        ConvertTempVariablesToVariables,
+      //  InlineSingleVariables,
         ConvertFieldsAndMethodsToProperties,
         AddBackingFieldToGettersAndSetters,
         RemoveRedundantGettersAndSetters,
-        ConvertFunctionsToConstructors
+        ConvertFunctionsToConstructors,
+        RemoveRedundantCast,
+        ReplaceVarWithVal
     )
 
     fun optimize(clazz: KotlinClass) {

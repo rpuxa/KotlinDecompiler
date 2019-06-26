@@ -5,7 +5,7 @@ import java.io.DataInputStream
 import java.io.FileInputStream
 
 fun main() {
-    FileInputStream("C:\\Projects\\untitled2\\out\\production\\untitled2\\Kotlin.class").use {
+    FileInputStream("C:\\Projects\\untitled2\\out\\production\\untitled2\\KotlinKt.class").use {
         val stream = DataInputStream(it)
         val file = ClassFile.readFromStream(stream)
         val clazz = KotlinClass.fromClassFile(file)

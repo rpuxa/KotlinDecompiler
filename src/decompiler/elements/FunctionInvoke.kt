@@ -37,6 +37,8 @@ class FunctionInvoke(
         }
     }
 
+    override val type = ref.signature.returnType
+
     override val size get() = (if (obj == null) 0 else 1) + arguments.size
 
     companion object {

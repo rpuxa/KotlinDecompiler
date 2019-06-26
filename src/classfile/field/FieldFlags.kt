@@ -16,7 +16,7 @@ enum class FieldFlags(val mask: Int) {
         fun getFlags(number: Int): Set<FieldFlags> {
             val list = HashSet<FieldFlags>()
             values().forEach {
-                if (number and it.mask == 1)
+                if (number and it.mask != 0)
                     list.add(it)
             }
             return list

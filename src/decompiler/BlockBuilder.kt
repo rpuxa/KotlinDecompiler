@@ -19,8 +19,10 @@ import kotlin.test.fail
 
 object BlockBuilder {
 
-    fun fromCodeSequence(pool: ConstantPool, code: MutableList<Instruction>, variablesNames: VariablesNames): Block {
-
+    fun fromCodeSequence(
+        pool: ConstantPool,
+        code: MutableList<Instruction>
+    ): Block {
 
         fun create(sequence: ControlList<Instruction>, loopsCount: Int): Block {
             var loopsCount = loopsCount
@@ -59,7 +61,7 @@ object BlockBuilder {
 
                     InstructionTypes.LOAD -> {
                         arg as ByteArgument
-                        stack.add(Variable(arg.value, variablesNames))
+                        stack.add(TempVariable(arg.value))
                     }
 
                     InstructionTypes.ACONST_NULL -> {
@@ -124,7 +126,7 @@ object BlockBuilder {
                                     stack
                                 )
                             )
-                            is Variable -> {
+                            is TempVariable -> {
                                 if (last.index != 0)
                                     fail()
                                 stack.push(
@@ -148,8 +150,13 @@ object BlockBuilder {
 
                     InstructionTypes.STORE -> {
                         arg as ByteArgument
-                        val element = stack.pop()
-                        stack.push(Assignment(arg.value, element, variablesNames))
+                        val currentPos = sequence.currentPosition
+                        val byteNumber = sequence.current().byteNumber
+                        while (sequence.current().byteNumber == -1) {
+                            sequence.moveForward()
+                        }
+                        stack.push(TempAssignment(arg.value, stack.pop(), byteNumber, sequence.current().byteNumber))
+                        sequence.jumpTo(currentPos)
                     }
 
                     InstructionTypes.RETURN -> {
@@ -268,6 +275,18 @@ object BlockBuilder {
                     InstructionTypes.CONTINUE -> {
                         arg as ShortArgument
                         stack.push(Continue(arg.value))
+                    }
+
+                    InstructionTypes.CHECKCAST -> {
+                        arg as ShortArgument
+                        stack.push(
+                            Cast(
+                                stack.pop(),
+                                ClassReference.valueOf(
+                                    pool.get<ClassConstant>(arg.value)
+                                )
+                            )
+                        )
                     }
 
 

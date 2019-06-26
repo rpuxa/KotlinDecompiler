@@ -2,6 +2,7 @@ package decompiler.elements.blocks
 
 import decompiler.elements.Block
 import decompiler.CodeStringBuilder
+import decompiler.Type
 import decompiler.elements.Element
 import decompiler.elements.SpecialBlock
 
@@ -41,4 +42,6 @@ class If(
     }
 
     override val size get() = if (elseBlock == null) 2 else 3
+
+    override val type get() = if (elseBlock == null) Type.NO_TYPE else Type.mergeTypes(listOf(ifBlock.type, elseBlock!!.type))
 }

@@ -15,7 +15,7 @@ enum class ClassFileFlags(val mask: Int) {
         fun getFlags(number: Int): Set<ClassFileFlags> {
             val list = HashSet<ClassFileFlags>()
             values().forEach {
-                if (number and it.mask == 1)
+                if (number and it.mask != 0)
                     list.add(it)
             }
             return list

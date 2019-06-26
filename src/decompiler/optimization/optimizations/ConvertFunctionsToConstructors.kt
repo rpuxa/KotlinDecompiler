@@ -31,7 +31,7 @@ object ConvertFunctionsToConstructors : Optimization(false, true) {
                     it.code,
                     c.arguments,
                     call,
-                    it.variablesNames
+                    it.variables
                 )
             }
 

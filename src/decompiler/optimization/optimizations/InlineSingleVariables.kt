@@ -30,11 +30,11 @@ object InlineSingleVariables : Optimization(true, true) {
                     controller.down()
                     find(controller, used, locals, argumentsSize)
                     controller.up()
-                    usedInThisBlock[element.variableIndex]++
+                    usedInThisBlock[element.variable.index]++
                 }
 
                 element is Variable || element is Assignment -> {
-                    val index = if (element is Variable) element.index else (element as Assignment).variableIndex
+                    val index = if (element is Variable) element.index else (element as Assignment).variable.index
                     if (index >= argumentsSize) {
                         for (array in used) {
                             if (array[index] != 0) {
@@ -74,8 +74,8 @@ object InlineSingleVariables : Optimization(true, true) {
                     controller.down()
                     replace(controller, toReplace, true)
                     controller.up()
-                    if (!innerBlock && element is DeclarationAssignment && element.variableIndex in toReplace) {
-                        toReplace[element.variableIndex] = element.element
+                    if (!innerBlock && element is DeclarationAssignment && element.variable.index in toReplace) {
+                        toReplace[element.variable.index] = element.element
                         controller.delete()
                         continue@loop
                     }

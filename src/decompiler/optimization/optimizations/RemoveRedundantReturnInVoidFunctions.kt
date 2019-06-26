@@ -4,7 +4,7 @@ import decompiler.KotlinFunction
 import decompiler.elements.Return
 import decompiler.optimization.Optimization
 
-object RemoveRedudantReturnInVoidFunctions : Optimization(true, true) {
+object RemoveRedundantReturnInVoidFunctions : Optimization(true, true) {
 
     override fun optimize(func: KotlinFunction) {
         val elements = func.code.elements

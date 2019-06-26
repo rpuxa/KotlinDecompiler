@@ -2,6 +2,7 @@ package decompiler.elements
 
 import decompiler.CodeStringBuilder
 import decompiler.ControlList
+import decompiler.Type
 
 class Block(val elements: MutableList<Element>) : ElementSequence {
 
@@ -29,4 +30,6 @@ class Block(val elements: MutableList<Element>) : ElementSequence {
     }
 
     override val size get() = elements.size
+
+    override val type get() = elements.last().type
 }

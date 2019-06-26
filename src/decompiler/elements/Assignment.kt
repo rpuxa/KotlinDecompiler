@@ -1,12 +1,13 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
-import decompiler.VariablesNames
+import decompiler.Type
+import decompiler.Variables
 
-open class Assignment(val variableIndex: Int, var element: Element, val variableNames: VariablesNames) : ComplexElement {
+class Assignment(val variable: Variable, var element: Element) : ComplexElement {
 
     override fun render(builder: CodeStringBuilder) {
-        builder.append(variableNames[variableIndex])
+        builder.append(variable.name)
         builder.append(" = ")
         element.render(builder)
     }
@@ -18,4 +19,6 @@ open class Assignment(val variableIndex: Int, var element: Element, val variable
     }
 
     override val size get() = 1
+
+    override val type: Type get() = Type.NO_TYPE
 }

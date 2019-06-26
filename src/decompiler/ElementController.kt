@@ -12,8 +12,8 @@ class ElementController(
     private val elementHierarchy = Stack<ComplexElement>().apply { push(element) }
     private val pointer = Stack<Int>().apply { push(0) }
 
-    val currentParent get() = elementHierarchy.peek()
-    val currentPosition get() = pointer.peek()
+    val currentParent: ComplexElement get() = elementHierarchy.peek()
+    val currentPosition: Int get() = pointer.peek()
 
     fun down() {
         val complexElement = current() as? ComplexElement ?: fail("You are in leaf")
@@ -35,7 +35,7 @@ class ElementController(
         pointer.pop()
     }
 
-    fun canRight(): Boolean = currentPosition >= currentParent.size
+    fun canRight(): Boolean = currentPosition < currentParent.size - 1
 
     fun right(times: Int = 1): Boolean {
         pointer.push(pointer.pop() + times)

@@ -6,6 +6,7 @@ class Signature(
 ) {
 
 
+    val arity = arguments.size
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

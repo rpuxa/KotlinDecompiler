@@ -3,6 +3,7 @@ package decompiler.elements
 import classfile.constant.constants.FieldRefConstant
 import decompiler.CodeStringBuilder
 import decompiler.MemberReference
+import decompiler.Type
 import java.util.*
 
 class SetField(
@@ -29,6 +30,8 @@ class SetField(
     override fun replaceByIndex(index: Int, element: Element) {
         obj = element
     }
+
+    override val type: Type get() = Type.NO_TYPE
 
     override val size get() = if (obj == null) 0 else 1
 

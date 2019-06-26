@@ -2,16 +2,14 @@ package decompiler
 
 import classfile.constant.ConstantPool
 import classfile.method.Method
-import classfile.method.MethodFlags
 import decompiler.elements.Block
 
 class KotlinFunction(
     val method: Method,
     val code: Block,
-    val variablesNames: VariablesNames
+    val variables: Variables,
+    val signature: Signature
 ) : Renderable {
-
-    val signature = Signature.fromDescriptor(method.descriptor.value)
 
 
     override fun render(builder: CodeStringBuilder) {
@@ -22,7 +20,7 @@ class KotlinFunction(
             if (index != 0) {
                 builder.append(", ")
             }
-            builder.append(variablesNames[index])
+            builder.append(variables.getArgumentName(index))
                 .append(": ")
                 .append(argument.name)
         }
@@ -42,19 +40,17 @@ class KotlinFunction(
 
     companion object {
         fun fromMethod(method: Method, pool: ConstantPool): KotlinFunction {
-            val isStatic = MethodFlags.STATIC in method.flags
-            val variablesNames = VariablesNames(method.attributes.codeAttribute.maxLocals + if (isStatic) 0 else 1)
-            if (!isStatic) {
-                variablesNames[0] = "this"
-            }
+            val signature = Signature.fromDescriptor(method.descriptor.value)
+            val codeAttribute = method.attributes.codeAttribute
+            val variablesNames = Variables(signature.arity, codeAttribute.attributes.getAttribute()!!)
             return KotlinFunction(
                 method,
                 BlockBuilder.fromCodeSequence(
                     pool,
-                    method.attributes.codeAttribute.code.toMutableList(),
-                    variablesNames
+                    codeAttribute.code.toMutableList()
                 ),
-                variablesNames
+                variablesNames,
+                signature
             )
         }
     }

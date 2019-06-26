@@ -18,3 +18,15 @@ fun <T> Iterable<T>.hasSingleElement(): Boolean {
 fun <T> MutableList<T>.pop(): T {
     return removeAt(size - 1)
 }
+
+fun <T> Iterable<T>.allSame(): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        return true
+    val firstElement = iterator.next()
+    while (iterator.hasNext()) {
+        if (firstElement != iterator.next())
+            return false
+    }
+    return true
+}

@@ -1,6 +1,7 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
+import decompiler.Type
 
 class Return(var element: Element?) : ComplexElement {
 
@@ -11,6 +12,8 @@ class Return(var element: Element?) : ComplexElement {
         builder.append(' ')
         element!!.render(builder)
     }
+
+    override val type: Type get() = Type.NOTHING
 
     override fun getByIndex(index: Int): Element = element!!
 

@@ -10,7 +10,7 @@ class Constructor(
     val block: Block,
     val superArguments: MutableList<Element>,
     val call: Int,
-    val variablesNames: VariablesNames
+    val variables: Variables
 ) : Renderable {
 
 
@@ -20,7 +20,7 @@ class Constructor(
         signature.arguments.forEachIndexed { index, argument ->
             if (index != 0)
                 builder.append(", ")
-            builder.append(variablesNames[index])
+            builder.append(variables.getArgumentName(index))
                 .append(": ")
                 .append(argument.name)
         }

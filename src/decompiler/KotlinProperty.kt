@@ -36,7 +36,6 @@ class KotlinProperty(
                 .addTab()
                 .append("set(setterValue) {")
                 .newLine()
-            setter.variablesNames[1] = "setterValue"
             setter.code.render(builder)
             builder.newLine()
                 .append('}')

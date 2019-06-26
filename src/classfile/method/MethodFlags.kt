@@ -20,7 +20,7 @@ enum class MethodFlags(val mask: Int) {
         fun getFlags(number: Int): Set<MethodFlags> {
             val list = HashSet<MethodFlags>()
             values().forEach {
-                if (number and it.mask == 1)
+                if (number and it.mask != 0)
                     list.add(it)
             }
             return list

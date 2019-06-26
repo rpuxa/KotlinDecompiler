@@ -1,8 +1,9 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
+import decompiler.Type
 
-object GetBackingField : Element {
+class GetBackingField(override val type: Type) : Element {
     override fun render(builder: CodeStringBuilder) {
         builder.append("field")
     }

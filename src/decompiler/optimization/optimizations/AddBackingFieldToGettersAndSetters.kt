@@ -13,7 +13,7 @@ object AddBackingFieldToGettersAndSetters : Optimization(false, true) {
             val controller = ElementController(function.code)
             controller.forEach { element ->
                 if (element is GetField && (element.obj as? Variable)?.index == 0 && element.ref.name == property.name) {
-                    controller.replace(GetBackingField)
+                    controller.replace(GetBackingField(element.type))
                 } else if (element is SetField && (element.obj as? Variable)?.index == 0 && element.ref.name == property.name) {
                     controller.replace(SetBackingField(element.element))
                 }

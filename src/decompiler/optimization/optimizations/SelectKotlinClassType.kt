@@ -5,6 +5,7 @@ import classfile.field.FieldFlags
 import classfile.method.MethodFlags
 import decompiler.ClassReference
 import decompiler.KotlinClass
+import decompiler.Type
 import decompiler.optimization.Optimization
 
 object SelectKotlinClassType : Optimization(false, true) {
@@ -38,7 +39,7 @@ object SelectKotlinClassType : Optimization(false, true) {
                         FieldFlags.STATIC in it.flags &&
                         FieldFlags.FINAL in it.flags &&
                         it.name.value == "INSTANCE" &&
-                        ClassReference.valueOf(it.descriptor.value) == ClassReference.valueOf(clazz.classFile.thisClass)
+                        Type.valueOf(it.descriptor.value) == Type.valueOf(clazz.classFile.thisClass)
             }
         ) {
             clazz.type = KotlinClass.Types.OBJECT

@@ -65,13 +65,13 @@ enum class InstructionTypes(private val code: Int) {
     BREAKPOINT(0xca),
     CALOAD(0x34),
     CASTORE(0x55),
-    CHECKCAST(0xc0),
+    CHECKCAST(0xc0) {
+        override fun DataInputStream.arg() = ushort
+    },
     D2F(0x90),
     D2I(0x8e),
     D2L(0x8f),
-    DADD(0x63) {
-        override fun convertTo() = ADD to NoArgument
-    },
+    DADD(0x63),
     DALOAD(0x31),
     DASTORE(0x52),
     DCMPG(0x98),
@@ -82,9 +82,7 @@ enum class InstructionTypes(private val code: Int) {
     DCONST_1(0x0f){
         override fun convertTo() = DCONST to ONE
     },
-    DDIV(0x6f) {
-        override fun convertTo() = DIV to NoArgument
-    },
+    DDIV(0x6f),
     DLOAD(0x18) {
         override fun DataInputStream.arg() = ubyte
 
@@ -102,9 +100,7 @@ enum class InstructionTypes(private val code: Int) {
     DLOAD_3(0x29) {
         override fun convertTo() = LOAD to THREE
     },
-    DMUL(0x6b) {
-        override fun convertTo() = MUL to NoArgument
-    },
+    DMUL(0x6b),
     DNEG(0x77),
     DREM(0x73),
     DRETURN(0xaf) {
@@ -127,9 +123,7 @@ enum class InstructionTypes(private val code: Int) {
     DSTORE_3(0x4a) {
         override fun convertTo() = STORE to THREE
     },
-    DSUB(0x67) {
-        override fun convertTo() = SUB to NoArgument
-    },
+    DSUB(0x67),
     DUP(0x59),
     DUP_X1(0x5a),
     DUP_X2(0x5b),
@@ -139,9 +133,7 @@ enum class InstructionTypes(private val code: Int) {
     F2D(0x8d),
     F2I(0x8b),
     F2L(0x8c),
-    FADD(0x62) {
-        override fun convertTo() = ADD to NoArgument
-    },
+    FADD(0x62),
     FALOAD(0x30),
     FASTORE(0x51),
     FCMPG(0x96),
@@ -155,9 +147,7 @@ enum class InstructionTypes(private val code: Int) {
     FCONST_2(0x0d){
         override fun convertTo() = FCONST to TWO
     },
-    FDIV(0x6e) {
-        override fun convertTo() = DIV to NoArgument
-    },
+    FDIV(0x6e),
     FLOAD(0x17) {
         override fun DataInputStream.arg() = ubyte
 
@@ -175,9 +165,7 @@ enum class InstructionTypes(private val code: Int) {
     FLOAD_3(0x25) {
         override fun convertTo() = LOAD to THREE
     },
-    FMUL(0x6a) {
-        override fun convertTo() = MUL to NoArgument
-    },
+    FMUL(0x6a),
     FNEG(0x76),
     FREM(0x72),
     FRETURN(0xae) {
@@ -200,9 +188,7 @@ enum class InstructionTypes(private val code: Int) {
     FSTORE_3(0x46) {
         override fun convertTo() = STORE to THREE
     },
-    FSUB(0x66) {
-        override fun convertTo() = SUB to NoArgument
-    },
+    FSUB(0x66),
     GETFIELD(0xb4) {
         override fun DataInputStream.arg() = ushort
     },
@@ -223,9 +209,7 @@ enum class InstructionTypes(private val code: Int) {
     I2F(0x86),
     I2L(0x85),
     I2S(0x93),
-    IADD(0x60) {
-        override fun convertTo() = ADD to NoArgument
-    },
+    IADD(0x60),
     IALOAD(0x2e),
     IAND(0x7e),
     IASTORE(0x4f),
@@ -250,9 +234,7 @@ enum class InstructionTypes(private val code: Int) {
     ICONST_5(0x08) {
         override fun convertTo() = ICONST to FIVE
     },
-    IDIV(0x6c) {
-        override fun convertTo() = DIV to NoArgument
-    },
+    IDIV(0x6c),
     IF_ACMPEQ(0xa5) {
         override fun DataInputStream.arg() = condition(Condition.EQUAL_REFERENCES)
         override fun convertTo(s: DataInputStream, arg: InstructionArgument) = IF to arg
@@ -349,9 +331,7 @@ enum class InstructionTypes(private val code: Int) {
     },
     IMPDEP1(0xfe),
     IMPDEP2(0xff),
-    IMUL(0x68) {
-        override fun convertTo() = MUL to NoArgument
-    },
+    IMUL(0x68),
     INEG(0x74),
     INSTANCEOF(0xc1),
     INVOKEDYNAMIC(0xba),
@@ -389,9 +369,7 @@ enum class InstructionTypes(private val code: Int) {
     ISTORE_3(0x3e) {
         override fun convertTo() = STORE to THREE
     },
-    ISUB(0x64) {
-        override fun convertTo() = SUB to NoArgument
-    },
+    ISUB(0x64),
     IUSHR(0x7c),
     IXOR(0x82),
     JSR(0xa8),
@@ -399,9 +377,7 @@ enum class InstructionTypes(private val code: Int) {
     L2D(0x8a),
     L2F(0x89),
     L2I(0x88),
-    LADD(0x61) {
-        override fun convertTo() = ADD to NoArgument
-    },
+    LADD(0x61),
     LALOAD(0x2f),
     LAND(0x7f),
     LASTORE(0x50),
@@ -426,9 +402,7 @@ enum class InstructionTypes(private val code: Int) {
 
         override fun convertTo(s: DataInputStream, arg: InstructionArgument) = LDC_W to arg
     },
-    LDIV(0x6d) {
-        override fun convertTo() = DIV to NoArgument
-    },
+    LDIV(0x6d),
     LLOAD(0x16) {
         override fun DataInputStream.arg() = ubyte
 
@@ -446,9 +420,7 @@ enum class InstructionTypes(private val code: Int) {
     LLOAD_3(0x21) {
         override fun convertTo() = LOAD to THREE
     },
-    LMUL(0x69) {
-        override fun convertTo() = MUL to NoArgument
-    },
+    LMUL(0x69),
     LNEG(0x75),
     LOOKUPSWITCH(0xab),
     LOR(0x81),
@@ -475,9 +447,7 @@ enum class InstructionTypes(private val code: Int) {
     LSTORE_3(0x42) {
         override fun convertTo() = STORE to THREE
     },
-    LSUB(0x65) {
-        override fun convertTo() = SUB to NoArgument
-    },
+    LSUB(0x65),
     LUSHR(0x7d),
     LXOR(0x83),
     MONITORENTER(0xc2),
@@ -512,10 +482,6 @@ enum class InstructionTypes(private val code: Int) {
     LCONST(-1),
     FCONST(-1),
     DCONST(-1),
-    ADD(-1),
-    SUB(-1),
-    MUL(-1),
-    DIV(-1),
     STORE(-1),
     RETURN_SOMETHING(-1),
     IF(-1),

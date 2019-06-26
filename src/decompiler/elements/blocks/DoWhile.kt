@@ -2,6 +2,7 @@ package decompiler.elements.blocks
 
 import decompiler.elements.Block
 import decompiler.CodeStringBuilder
+import decompiler.Type
 import decompiler.elements.Element
 import decompiler.elements.SpecialBlock
 
@@ -29,4 +30,6 @@ class DoWhile(
     }
 
     override val size get() = 2
+
+    override val type get() = Type.NO_TYPE
 }

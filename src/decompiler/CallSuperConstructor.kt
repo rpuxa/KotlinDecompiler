@@ -14,6 +14,8 @@ class CallSuperConstructor(
         throw UnsupportedOperationException()
     }
 
+    override val type get() = Type.UNIT
+
     companion object {
         fun fromStack(methodRefConstant: MethodRefConstant, stack: Stack<Element>): CallSuperConstructor {
             val ref = MemberReference.valueOf(methodRefConstant)

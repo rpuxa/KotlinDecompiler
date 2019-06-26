@@ -1,15 +1,15 @@
 package decompiler.elements
 
 import decompiler.CodeStringBuilder
-import decompiler.VariablesNames
+import decompiler.Type
+import decompiler.Variables
 
 class DeclarationAssignment(
-    val final: Boolean,
-    val showType: Boolean,
-    variableIndex: Int,
-    element: Element,
-    variablesNames: VariablesNames
-) : Assignment(variableIndex, element, variablesNames) {
+    var variable: Variable,
+    var element: Element,
+    var final: Boolean = false,
+    var showType: Boolean = false
+) : ComplexElement {
 
     override fun render(builder: CodeStringBuilder) {
         if (final)
@@ -17,6 +17,22 @@ class DeclarationAssignment(
         else
             builder.append("var")
         builder.append(' ')
-        super.render(builder)
+            .append(variable.name)
+        if (showType) {
+            builder.append(": ")
+                .append(variable.type)
+        }
+        builder.append(" = ")
+            .append(element)
     }
+
+    override fun getByIndex(index: Int) = element
+
+    override fun replaceByIndex(index: Int, element: Element) {
+        this.element = element
+    }
+
+    override val size get() = 1
+
+    override val type: Type get() = Type.NO_TYPE
 }

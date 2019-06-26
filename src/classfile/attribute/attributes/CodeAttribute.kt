@@ -29,9 +29,9 @@ class CodeAttribute(
             var currentByte = 0
             val instructions = LinkedList<Instruction>()
             while (currentByte < codeLength) {
-                val (instruction,   bytes) = Instruction.readFromStream(stream)
-                bytesToInstruction[currentByte] = instruction
-                currentByte += bytes
+                val (instruction, offset)= Instruction.readFromStream(stream, currentByte)
+                bytesToInstruction[instruction.byteNumber] = instruction
+                currentByte += offset
                 instructions.add(instruction)
             }
 
@@ -41,7 +41,7 @@ class CodeAttribute(
                 val arg = instruction.argument
                 if (arg is Jump) {
                     val i = bytesToInstruction[byte + arg.offset]!!
-                    val label = labels[i] ?: Instruction(InstructionTypes.LABEL, ShortArgument(labels.size))
+                    val label = labels[i] ?: Instruction(InstructionTypes.LABEL, ShortArgument(labels.size), -1)
                     labels[i] = label
                     arg.labelId = (label.argument as ShortArgument).value
                 }
